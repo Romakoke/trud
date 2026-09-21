@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d6b86">
+<title>Alan International School — Расписание</title>
+<style>
+:root {
+  --blue:#075f78;
+  --blue2:#0b7898;
+  --yellow:#f5b516;
+  --bg:#f4f7fa;
+  --card:#ffffff;
+  --text:#15232d;
+  --muted:#6f7d87;
+  --line:#e3e9ee;
+  --shadow:0 10px 30px rgba(20,50,65,.08);
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  color:var(--text); background:linear-gradient(180deg,#f9fbfc 0,#f2f6f8 100%);
+}
+.header {
+  background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20;
+  box-shadow:0 3px 16px rgba(0,0,0,.04);
+}
+.header-inner {
+  max-width:1100px; margin:auto; min-height:82px; padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+}
+.brand { display:flex; align-items:center; gap:13px; min-width:0; }
+.brand img { width:54px; height:54px; object-fit:contain; border-radius:12px; }
+.brand-title { font-weight:800; font-size:20px; line-height:1.1; }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:4px; }
+.logos { display:flex; align-items:center; gap:10px; }
+.logos img { height:42px; width:auto; object-fit:contain; }
+.container { max-width:1100px; margin:0 auto; padding:26px 20px 36px; }
+.hero {
+  background:linear-gradient(135deg,#075f78,#0b7898); color:#fff;
+  border-radius:22px; padding:25px; box-shadow:var(--shadow); margin-bottom:20px;
+}
+.hero h1 { margin:0; font-size:28px; }
+.hero p { margin:7px 0 0; opacity:.88; }
+.tabs {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 18px;
+}
+.tab {
+  border:0; background:#e9eef1; color:#344751; padding:15px 18px; border-radius:14px;
+  font-weight:800; font-size:16px; cursor:pointer; transition:.2s;
+}
+.tab.active { background:var(--yellow); color:#18242b; box-shadow:0 7px 18px rgba(245,181,22,.22); }
+.day-nav { display:flex; gap:8px; overflow-x:auto; padding:3px 1px 14px; scrollbar-width:thin; }
+.day {
+  border:1px solid var(--line); background:#fff; color:#40515b; border-radius:999px;
+  padding:10px 16px; font-weight:700; cursor:pointer; white-space:nowrap;
+}
+.day.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+.schedule-card {
+  background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.table { width:100%; border-collapse:collapse; }
+.table th {
+  background:#f7f9fa; text-align:left; color:#63737d; font-size:12px; text-transform:uppercase;
+  letter-spacing:.04em; padding:13px 18px; border-bottom:1px solid var(--line);
+}
+.table td { padding:14px 18px; border-bottom:1px solid var(--line); vertical-align:middle; }
+.table tr:last-child td { border-bottom:0; }
+.period { font-weight:800; width:80px; }
+.time { color:var(--muted); font-size:14px; width:180px; }
+.chips { display:flex; flex-wrap:wrap; gap:7px; }
+.chip {
+  display:inline-flex; align-items:center; gap:6px; padding:7px 11px; border-radius:10px;
+  background:#e9f4f7; color:#075f78; font-weight:800; font-size:14px;
+}
+.chip.choice { background:#fff4d4; color:#8a6500; }
+.empty { color:#aab4ba; font-size:14px; }
+.footer {
+  max-width:1100px; margin:0 auto; padding:18px 20px 30px; text-align:center;
+  color:#7c8991; font-size:13px;
+}
+.mobile-list { display:none; }
+.legend { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; font-size:12px; color:#687780; }
+.legend span { padding:5px 9px; border-radius:8px; background:#e9f4f7; }
+.legend .choice { background:#fff4d4; color:#8a6500; }
+@media (max-width:700px) {
+  .header-inner { padding:10px 14px; min-height:70px; }
+  .brand img { width:46px; height:46px; }
+  .brand-title { font-size:16px; }
+  .brand-sub { font-size:10px; }
+  .logos img { height:32px; }
+  .logos img:first-child { display:none; }
+  .container { padding:16px 12px 25px; }
+  .hero { border-radius:17px; padding:20px; }
+  .hero h1 { font-size:22px; }
+  .tabs { position:sticky; top:70px; z-index:10; background:var(--bg); padding:6px 0; }
+  .tab { padding:13px 8px; font-size:14px; }
+  .day-nav { margin-right:-12px; padding-right:12px; }
+  .schedule-card { border-radius:15px; }
+  .table { display:none; }
+  .mobile-list { display:block; }
+  .mobile-row {
+    display:grid; grid-template-columns:43px 1fr; gap:10px; padding:13px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-row:last-child { border-bottom:0; }
+  .m-period {
+    width:38px; height:38px; border-radius:11px; background:#e9f4f7; color:var(--blue);
+    display:flex; align-items:center; justify-content:center; font-weight:900;
+  }
+  .m-time { font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .m-chip { display:inline-flex; margin:2px 5px 2px 0; padding:6px 9px; border-radius:9px; background:#e9f4f7; color:var(--blue); font-weight:800; font-size:13px; }
+  .m-chip.choice { background:#fff4d4; color:#8a6500; }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="alan-logo.jpeg" alt="Alan International School">
+      <div>
+        <div class="brand-title">Alan International School</div>
+        <div class="brand-sub">2026–2027 • 1-жартыжылдық</div>
+      </div>
+    </div>
+    <div class="logos">
+      <img src="rolab-logo.png" alt="ROLAB">
+      <img src="alan-logo.jpeg" alt="Alan">
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>Сабақ кестесі</h1>
+    <p>Көркем еңбек / Художественный труд және информатика</p>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" data-subject="labor">Еңбек / Художественный труд</button>
+    <button class="tab" data-subject="informatics">Информатика</button>
+  </div>
+
+  <div class="day-nav" id="dayNav"></div>
+
+  <div class="legend">
+    <span>Көк — пәннің негізгі сабағы</span>
+    <span class="choice">Сары — бірнеше пәннен таңдау/топтық сабақ</span>
+  </div>
+
+  <section class="schedule-card">
+    <table class="table">
+      <thead>
+        <tr><th>Сабақ</th><th>Уақыты</th><th>Сынып</th></tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="mobile-list" id="mobileList"></div>
+  </section>
+</main>
+
+<footer class="footer">© 2026 ROLAB × Alan International School</footer>
+
+<script>
+const DATA = {
+  "labor": {
+    "дүйсенбі": {
+      "1": [],
+      "2": [
+        {
+          "class": "7 А",
+          "raw": "көр еңбек"
+        }
+      ],
+      "3": [
+        {
+          "class": "5 C",
+          "raw": "худ труд"
+        }
+      ],
+      "4": [],
+      "5": [
+        {
+          "class": "6 C",
+          "raw": "худ труд"
+        }
+      ],
+      "6": [
+        {
+          "class": "6 А",
+          "raw": "көр еңбек"
+        }
+      ],
+      "7": [],
+      "8": []
+    },
+    "сейсенбі": {
+      "1": [],
+      "2": [
+        {
+          "class": "5 А",
+          "raw": "көр еңбек"
+        }
+      ],
+      "3": [],
+      "4": [
+        {
+          "class": "5 Е",
+          "raw": "көрк еңбек"
+        }
+      ],
+      "5": [
+        {
+          "class": "6 B",
+          "raw": "көрк еңбек"
+        }
+      ],
+      "6": [
+        {
+          "class": "5 B",
+          "raw": "көрк еңбек"
+        }
+      ],
+      "7": [],
+      "8": []
+    },
+    "сәрсенбі": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": [],
+      "6": [],
+      "7": [],
+      "8": []
+    },
+    "бейсенбі": {
+      "1": [],
+      "2": [
+        {
+          "class": "6 C",
+          "raw": "худ труд"
+        }
+      ],
+      "3": [],
+      "4": [],
+      "5": [
+        {
+          "class": "7 C",
+          "raw": "худ труд"
+        }
+      ],
+      "6": [
+        {
+          "class": "7 B",
+          "raw": "көр еңбек"
+        }
+      ],
+      "7": [],
+      "8": []
+    },
+    "жұма": {
+      "1": [
+        {
+          "class": "5 А",
+          "raw": "көр еңбек"
+        }
+      ],
+      "2": [
+        {
+          "class": "5 Е",
+          "raw": "көр еңбек"
+        }
+      ],
+      "3": [
+        {
+          "class": "6 B",
+          "raw": "көр еңбек"
+        }
+      ],
+      "4": [
+        {
+          "class": "5 C",
+          "raw": "худ труд"
+        }
+      ],
+      "5": [
+        {
+          "class": "5 B",
+          "raw": "көр еңбек"
+        }
+      ],
+      "6": [
+        {
+          "class": "6 А",
+          "raw": "көрк еңбек"
+        }
+      ],
+      "7": [],
+      "8": []
+    }
+  },
+  "informatics": {
+    "дүйсенбі": {
+      "1": [],
+      "2": [],
+      "3": [
+        {
+          "class": "11 А",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "4": [],
+      "5": [
+        {
+          "class": "10 D",
+          "raw": "информатик",
+          "type": "regular"
+        }
+      ],
+      "6": [],
+      "7": [],
+      "8": []
+    },
+    "сейсенбі": {
+      "1": [
+        {
+          "class": "5 B",
+          "raw": "информатик",
+          "type": "regular"
+        },
+        {
+          "class": "9 С",
+          "raw": "информат",
+          "type": "regular"
+        },
+        {
+          "class": "11 C",
+          "raw": "Физика/вс истор/информатика             /география/химия",
+          "type": "choice"
+        }
+      ],
+      "2": [
+        {
+          "class": "6 C",
+          "raw": "информатика",
+          "type": "regular"
+        },
+        {
+          "class": "8 C",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "3": [
+        {
+          "class": "5 А",
+          "raw": "информатика",
+          "type": "regular"
+        },
+        {
+          "class": "7 А",
+          "raw": "информатика",
+          "type": "regular"
+        },
+        {
+          "class": "11 А",
+          "raw": "Физика/дж тарих/информатика                      /география/химия",
+          "type": "choice"
+        }
+      ],
+      "4": [],
+      "5": [
+        {
+          "class": "8 A",
+          "raw": "информатика",
+          "type": "regular"
+        },
+        {
+          "class": "10 А",
+          "raw": "Физика/дж тарих/                      информатика/география/химия",
+          "type": "choice"
+        },
+        {
+          "class": "10 C",
+          "raw": "Физика/вс истор/информатика             /география/химия",
+          "type": "choice"
+        }
+      ],
+      "6": [
+        {
+          "class": "7 B",
+          "raw": "информат",
+          "type": "regular"
+        }
+      ],
+      "7": [],
+      "8": []
+    },
+    "сәрсенбі": {
+      "1": [
+        {
+          "class": "5 C",
+          "raw": "информат",
+          "type": "regular"
+        }
+      ],
+      "2": [
+        {
+          "class": "6 А",
+          "raw": "информатик",
+          "type": "regular"
+        }
+      ],
+      "3": [],
+      "4": [],
+      "5": [
+        {
+          "class": "11 C",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "6": [],
+      "7": [
+        {
+          "class": "8 B",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "8": []
+    },
+    "бейсенбі": {
+      "1": [
+        {
+          "class": "5 Е",
+          "raw": "информат",
+          "type": "regular"
+        },
+        {
+          "class": "7 C",
+          "raw": "информат",
+          "type": "regular"
+        },
+        {
+          "class": "11 А",
+          "raw": "Физика/дж тарих/информатика                      /география/химия",
+          "type": "choice"
+        }
+      ],
+      "2": [
+        {
+          "class": "9 A",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "3": [
+        {
+          "class": "10 C",
+          "raw": "информатика",
+          "type": "regular"
+        },
+        {
+          "class": "11 C",
+          "raw": "Физика/вс истор/информатика                         /география/химия",
+          "type": "choice"
+        }
+      ],
+      "4": [],
+      "5": [
+        {
+          "class": "10 А",
+          "raw": "Физика/дж тарих/                      информатика/география/химия",
+          "type": "choice"
+        },
+        {
+          "class": "10 C",
+          "raw": "Физика/вс истор/информатика             /география/химия",
+          "type": "choice"
+        }
+      ],
+      "6": [],
+      "7": [],
+      "8": []
+    },
+    "жұма": {
+      "1": [
+        {
+          "class": "10 А",
+          "raw": "информатик",
+          "type": "regular"
+        }
+      ],
+      "2": [],
+      "3": [
+        {
+          "class": "9 В",
+          "raw": "информат",
+          "type": "regular"
+        },
+        {
+          "class": "11 В",
+          "raw": "информатика",
+          "type": "regular"
+        }
+      ],
+      "4": [],
+      "5": [],
+      "6": [
+        {
+          "class": "6 B",
+          "raw": "информат",
+          "type": "regular"
+        }
+      ],
+      "7": [],
+      "8": []
+    }
+  }
+};
+const TIMES = {"1": "08:30–09:10", "2": "09:40–10:20", "3": "10:25–11:05", "4": "11:10–11:50", "5": "11:55–12:35", "6": "12:40–13:20", "7": "13:55–14:35", "8": "15:00–15:50"};
+const DAYS = ["дүйсенбі", "сейсенбі", "сәрсенбі", "бейсенбі", "жұма"];
+let subject = "labor";
+let activeDay = "дүйсенбі";
+
+const dayNav = document.getElementById("dayNav");
+const tableBody = document.getElementById("tableBody");
+const mobileList = document.getElementById("mobileList");
+
+function renderDays() {
+  dayNav.innerHTML = "";
+  DAYS.forEach(day => {
+    const b = document.createElement("button");
+    b.className = "day" + (day === activeDay ? " active" : "");
+    b.textContent = day[0].toUpperCase() + day.slice(1);
+    b.onclick = () => { activeDay = day; renderDays(); renderSchedule(); };
+    dayNav.appendChild(b);
+  });
+}
+
+function renderSchedule() {
+  const periods = DATA[subject][activeDay];
+  tableBody.innerHTML = "";
+  mobileList.innerHTML = "";
+  for (let p=1; p<=8; p++) {
+    const items = periods[String(p)] || [];
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="period">${p}</td>
+      <td class="time">${TIMES[p]}</td>
+      <td>${items.length ? '<div class="chips">' + items.map(x =>
+        `<span class="chip ${x.type === "choice" ? "choice" : ""}">${x.class}</span>`).join("") + '</div>'
+        : '<span class="empty">—</span>'}</td>`;
+    tableBody.appendChild(tr);
+
+    const row = document.createElement("div");
+    row.className = "mobile-row";
+    row.innerHTML = `
+      <div class="m-period">${p}</div>
+      <div>
+        <div class="m-time">${TIMES[p]}</div>
+        ${items.length ? items.map(x =>
+          `<span class="m-chip ${x.type === "choice" ? "choice" : ""}">${x.class}</span>`).join("")
+          : '<span class="empty">Сабақ жоқ</span>'}
+      </div>`;
+    mobileList.appendChild(row);
+  }
+}
+
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    subject = btn.dataset.subject;
+    renderSchedule();
+  });
+});
+
+renderDays();
+renderSchedule();
+</script>
+</body>
+</html>
